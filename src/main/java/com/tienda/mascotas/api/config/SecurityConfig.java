@@ -13,8 +13,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Desactivar CSRF para permitir POST desde frontend
-                .cors(cors -> cors.disable()) // CORS se maneja en CorsConfig
+                .csrf(csrf -> csrf.disable()) // Desactivar CSRF para POST desde frontend
+                .cors(cors -> {}) // Habilitar CORS y usar configuración global
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll() // Permitir todas las peticiones sin autenticación
                 );
