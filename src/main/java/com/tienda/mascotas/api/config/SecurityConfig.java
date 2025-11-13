@@ -1,9 +1,11 @@
 package com.tienda.mascotas.api.config;
 
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -13,10 +15,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Desactivar CSRF para POST desde frontend
-                .cors(cors -> {}) // Habilitar CORS y usar configuración global
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> {}) // Usa la configuración de CorsConfig
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() // Permitir todas las peticiones sin autenticación
+                        .requestMatchers("/", "/health", "/api/public/**").permitAll()
+                        .anyRequest().permitAll() // Cambia a authenticated() cuando tengas JWT
                 );
 
         return http.build();
