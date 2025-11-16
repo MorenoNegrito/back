@@ -40,9 +40,8 @@ build/
 !.env.example
 
 ### Configuraciones sensibles ###
-application-prod.properties
 application-local.properties
-
+.env.production.local
 ### Logs ###
 *.log
 

@@ -13,7 +13,7 @@ public class CorsConfig {
 
     @Value("${spring.web.cors.allowed-origins:*}")
     private String allowedOrigins;
-
+//a
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
