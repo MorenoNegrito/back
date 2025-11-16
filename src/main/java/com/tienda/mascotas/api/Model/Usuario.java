@@ -29,7 +29,6 @@ public class Usuario {
     private String email;
 
     @Column(nullable = false)
-    @JsonIgnore
     private String password;
 
     private String telefono;
