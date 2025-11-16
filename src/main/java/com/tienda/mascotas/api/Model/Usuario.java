@@ -1,6 +1,8 @@
 package com.tienda.mascotas.api.Model;
 
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +20,6 @@ public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    //a
 
     @Column(nullable = false)
     private String nombre;
@@ -30,10 +31,10 @@ public class Usuario {
     private String email;
 
     @Column(nullable = false)
+    @JsonIgnore  // ← AGREGA ESTO
     private String password;
 
     private String telefono;
-
     private String direccion;
 
     @Enumerated(EnumType.STRING)
@@ -47,6 +48,7 @@ public class Usuario {
     private LocalDateTime fechaRegistro = LocalDateTime.now();
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @JsonIgnore  // ← También aquí para evitar loops
     private List<Pedido> pedidos;
 
     public enum Role {
