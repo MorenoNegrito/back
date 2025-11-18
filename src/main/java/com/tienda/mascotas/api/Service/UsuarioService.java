@@ -1,10 +1,9 @@
 package com.tienda.mascotas.api.Service;
 
-
 import com.tienda.mascotas.api.Model.Usuario;
 import com.tienda.mascotas.api.Repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +14,8 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    private PasswordEncoder passwordEncoder;  // ← Cambio aquí
 
     public List<Usuario> obtenerTodos() {
         return usuarioRepository.findAll();
@@ -33,6 +33,12 @@ public class UsuarioService {
         if (usuarioRepository.existsByEmail(usuario.getEmail())) {
             throw new RuntimeException("El email ya está registrado");
         }
+
+        // Validar que el password no sea null
+        if (usuario.getPassword() == null || usuario.getPassword().isEmpty()) {
+            throw new RuntimeException("La contraseña es obligatoria");
+        }
+
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         return usuarioRepository.save(usuario);
     }
