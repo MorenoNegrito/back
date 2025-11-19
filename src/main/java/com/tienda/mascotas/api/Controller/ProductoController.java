@@ -1,12 +1,21 @@
 package com.tienda.mascotas.api.Controller;
 
-
 import com.tienda.mascotas.api.Model.Producto;
 import com.tienda.mascotas.api.Service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.util.List;
 
 @RestController
@@ -52,7 +61,7 @@ public class ProductoController {
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
         try {
             productoService.eliminar(id);
-            return ResponseEntity.ok().body("Producto desactivado correctamente");
+            return ResponseEntity.ok("Producto desactivado correctamente");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
