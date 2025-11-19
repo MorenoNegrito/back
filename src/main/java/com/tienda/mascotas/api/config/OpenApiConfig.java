@@ -18,9 +18,8 @@ public class OpenApiConfig {
                         .version("1.0.0")
                         .description("Documentación de la API REST para la gestión de productos, usuarios y pedidos en Tienda de Mascotas.")
                         .contact(new Contact()
-                                .name("Joaquin Iturriaga")
-                                .email("tuemail@ejemplo.com")
-                                .url("https://github.com/tuusuario"))
+                                .name("Evaluacion")
+                        )
                 );
     }
 }
