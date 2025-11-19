@@ -41,6 +41,7 @@ build/
 
 ### Configuraciones sensibles ###
 application-local.properties
+application.properties
 .env.production.local
 ### Logs ###
 *.log
