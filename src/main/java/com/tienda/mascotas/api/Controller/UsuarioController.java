@@ -73,13 +73,14 @@ public class UsuarioController {
         }
     }
 
-    @Operation(summary = "Eliminar (desactivar) un usuario")
+    @Operation(summary = "Eliminar un usuario PERMANENTEMENTE")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(
             @Parameter(description = "ID del usuario") @PathVariable Long id) {
         try {
-            usuarioService.eliminar(id);
-            return ResponseEntity.ok("Usuario desactivado correctamente");
+            // CAMBIO: Ahora elimina de verdad en vez de desactivar
+            usuarioService.eliminarPermanente(id);
+            return ResponseEntity.ok("Usuario eliminado permanentemente");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

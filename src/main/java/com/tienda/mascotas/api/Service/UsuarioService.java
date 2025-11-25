@@ -59,11 +59,12 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
-    public void eliminar(Long id) {
+    public void eliminarPermanente(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        usuario.setActivo(false);
-        usuarioRepository.save(usuario);
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
+
+        // Eliminar de la base de datos
+        usuarioRepository.delete(usuario);
     }
 
     public List<Usuario> obtenerActivos() {
