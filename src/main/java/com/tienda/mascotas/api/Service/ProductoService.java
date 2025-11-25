@@ -60,9 +60,9 @@ public class ProductoService {
     public void eliminar(Long id) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-        producto.setActivo(false);
-        productoRepository.save(producto);
+        productoRepository.delete(producto); // Elimina físicamente el registro
     }
+
 
     public List<Producto> obtenerActivos() {
         return productoRepository.findByActivoTrue();

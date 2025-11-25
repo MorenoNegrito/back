@@ -73,17 +73,18 @@ public class ProductoController {
         }
     }
 
-    @Operation(summary = "Eliminar (desactivar) un producto")
+    @Operation(summary = "Eliminar un producto")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminar(
             @Parameter(description = "ID del producto") @PathVariable Long id) {
         try {
             productoService.eliminar(id);
-            return ResponseEntity.ok("Producto desactivado correctamente");
+            return ResponseEntity.ok("Producto eliminado correctamente");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
 
     @Operation(summary = "Obtener productos activos")
     @GetMapping("/activos")
