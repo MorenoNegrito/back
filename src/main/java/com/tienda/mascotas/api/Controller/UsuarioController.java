@@ -2,11 +2,9 @@ package com.tienda.mascotas.api.Controller;
 
 import com.tienda.mascotas.api.Model.Usuario;
 import com.tienda.mascotas.api.Service.UsuarioService;
+import com.tienda.mascotas.api.config.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,16 +12,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/usuarios")
-@Tag(name = "Pedidos", description = "Operaciones relacionadas con los Usuarios")
-
+@Tag(name = "Usuarios", description = "Operaciones relacionadas con los Usuarios")
 public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Operation(summary = "Obtener todos los usuarios")
     @GetMapping
@@ -49,12 +51,25 @@ public class UsuarioController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Crear un nuevo usuario")
+    @Operation(summary = "Crear un nuevo usuario (registro público)")
     @PostMapping
     public ResponseEntity<?> crear(@RequestBody Usuario usuario) {
         try {
             Usuario nuevoUsuario = usuarioService.crear(usuario);
-            return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
+
+            // Auto-login después del registro
+            String token = jwtUtil.generateToken(
+                    nuevoUsuario.getEmail(),
+                    nuevoUsuario.getId(),
+                    nuevoUsuario.getRole().toString()
+            );
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("token", token);
+            response.put("usuario", nuevoUsuario);
+            response.put("expiresIn", 86400000); // 24 horas en ms
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -78,7 +93,6 @@ public class UsuarioController {
     public ResponseEntity<?> eliminar(
             @Parameter(description = "ID del usuario") @PathVariable Long id) {
         try {
-            // CAMBIO: Ahora elimina de verdad en vez de desactivar
             usuarioService.eliminarPermanente(id);
             return ResponseEntity.ok("Usuario eliminado permanentemente");
         } catch (RuntimeException e) {
@@ -118,7 +132,21 @@ public class UsuarioController {
         boolean valido = usuarioService.validarCredenciales(request.getEmail(), request.getPassword());
         if (valido) {
             Usuario usuario = usuarioService.obtenerPorEmail(request.getEmail()).get();
-            return ResponseEntity.ok(usuario);
+
+            // Generar token JWT
+            String token = jwtUtil.generateToken(
+                    usuario.getEmail(),
+                    usuario.getId(),
+                    usuario.getRole().toString()
+            );
+
+            // Respuesta con token y datos del usuario
+            Map<String, Object> response = new HashMap<>();
+            response.put("token", token);
+            response.put("usuario", usuario);
+            response.put("expiresIn", 86400000); // 24 horas en ms
+
+            return ResponseEntity.ok(response);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales inválidas");
     }
