@@ -26,7 +26,8 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        // Rutas públicas sin método específico
+
+                        // --- RUTAS PÚBLICAS (SIN TOKEN) ---
                         .requestMatchers(
                                 "/",
                                 "/health",
@@ -34,8 +35,27 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**"
                         ).permitAll()
+
+                        // Login y registro público
                         .requestMatchers(HttpMethod.POST, "/api/usuarios/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
+
+                        // Productos públicos (GET)
+                        .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
+
+                        // Categorías públicas (GET)
+                        .requestMatchers(HttpMethod.GET, "/api/categorias/**").permitAll()
+
+                        // --- Sólo ADMIN (POST, PUT, DELETE) ---
+                        .requestMatchers(HttpMethod.POST, "/api/productos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/productos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/productos/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/api/categorias/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/categorias/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/categorias/**").hasRole("ADMIN")
+
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
